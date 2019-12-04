@@ -1,0 +1,6 @@
+[
+    {
+        "HierarchicalClustering": ["Pearson MS", "Cosine MS", "SSIM MS", "MFS Max MS", "Shared Pixel", "Hypergeometric", "Contingency", "MDSI Sim", "Local Std", "IntMagAn", "Grad Info", "Intens Hist", "Mutual Info"],
+        "AffinityPropagationClustering": ["Pearson MS", "Cosine MS", "SSIM MS", "MFS Max MS", "Shared Pixel", "Hypergeometric", "Contingency", "MDSI Sim", "Local Std", "IntMagAn", "Grad Info", "Intens Hist", "Mutual Info"]
+    }
+]
