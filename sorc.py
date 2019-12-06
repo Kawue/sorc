@@ -86,10 +86,10 @@ def write_sorc(hdfpath, savepath, limit):
     ]
     
     stats_prettify = {
-        "silhouette_score(h)": "SHS Val",
-        "silhouette_score(h) ranks": "SHS Rank",
-        "calinski_harabasz_score(h)": "CHS Val",
-        "calinski_harabasz_score(h) ranks": "CHS Rank",
+        "silhouette_score(h)": "SCS Val",
+        "silhouette_score(h) ranks": "SCS Rank",
+        "calinski_harabasz_score(h)": "CHI Val",
+        "calinski_harabasz_score(h) ranks": "CHI Rank",
         "max_clustersize_ratio": "MCR",
         "global_min_max_ratio_99_1(l)": "R-99-1",
         "global_min_max_ratio_95_5(l)": "R-95-5",
@@ -101,8 +101,8 @@ def write_sorc(hdfpath, savepath, limit):
         ranked_ss = dframe_dict[cluster_method]["silhouette_score(h)"].rank(ascending=True)  / dframe_dict[cluster_method].shape[0]
         dframe_dict[cluster_method].insert(loc=1, column="silhouette_score(h) ranks", value=ranked_ss)
 
-        ranked_chs = dframe_dict[cluster_method]["calinski_harabasz_score(h)"].rank(ascending=True) / dframe_dict[cluster_method].shape[0]
-        dframe_dict[cluster_method].insert(loc=3, column="calinski_harabasz_score(h) ranks", value=ranked_chs)
+        ranked_chi = dframe_dict[cluster_method]["calinski_harabasz_score(h)"].rank(ascending=True) / dframe_dict[cluster_method].shape[0]
+        dframe_dict[cluster_method].insert(loc=3, column="calinski_harabasz_score(h) ranks", value=ranked_chi)
 
         rank_sum = dframe_dict[cluster_method][["silhouette_score(h) ranks", "calinski_harabasz_score(h) ranks"]].sum(axis=1) / 2
         dframe_dict[cluster_method].insert(loc=7, column="Sum", value=rank_sum)
@@ -129,7 +129,7 @@ def write_sorc(hdfpath, savepath, limit):
 
     for idx, (cluster_method, dframe) in enumerate(dframe_dict.items()):
         soup.find_all('h3')[idx].append(title_prettify[cluster_method])
-        sub_frame = dframe[["SHS Rank", "CHS Rank", "Sum", "SHS Val", "CHS Val"]]
+        sub_frame = dframe[["SCS Rank", "CHI Rank", "Sum", "SCS Val", "CHI Val"]]
         sub_frame = sub_frame.sort_values(by="Sum", ascending=False)
         sub_frame = sub_frame.iloc[:limit]
         sub_frame.insert(loc=0, column="Method", value=sub_frame.index)

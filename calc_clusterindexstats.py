@@ -59,7 +59,7 @@ def sorc_stats(dmatrix, images, memb, mask_img, measure_name, eval_object):
 def produce_dummy_stats(measure_name, eval_object):
     cl_object = {}
     cl_object["calinski_harabasz_score(h)"] = np.nan
-    cl_object["davies_bouldin_score(l)"] = np.nan
+    cl_object["silhouette_score(h)"] = np.nan
     cl_object["max_clustersize_ratio"] = np.nan
     cl_object["global_min_max_ratio_99_1(l)"] = np.nan
     cl_object["global_min_max_ratio_95_5(l)"] = np.nan
