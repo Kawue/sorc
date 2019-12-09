@@ -116,7 +116,7 @@ def write_sorc(hdfpath, savepath, limit):
     soup.style.append(".container{display: flex;}")
     soup.style.append("table{margin: 0.2vw; margin-bottom:2vw; margin-top:-0.6vw; width: 30.4w; min-width: 30.4vw;}")
     soup.style.append("caption{font-weight: bold;}")
-    soup.style.append("hr{margin-left:0.2vw; margin-top:3vw; margin-bottom:5vw; width: 91.8vw;}")
+    soup.style.append("hr{margin-left:0.2vw; margin-top:3vw; margin-bottom:5vw; width: 90.6vw;}")
     soup.style.append("table td{font-size: 13pt !important;}")
 
     #html_order = ["hierarchical", "affinity-propagation", "kmedoids-em", "kmedoids-pam", "spectral-clustering", "dbscan", "optics"]
@@ -143,7 +143,7 @@ def write_sorc(hdfpath, savepath, limit):
     soup.style.append(".col2{min-width:3vw !important; width:3vw !important;}")
     soup.style.append(".col3{min-width:5vw !important; width:5vw !important;}")
     soup.style.append(".col4{min-width:3vw !important; width:3vw !important;}")
-    soup.style.append(".col5{min-width:4.2vw !important; width:4.2vw !important;}")
+    soup.style.append(".col5{min-width:3vw !important; width:3vw !important;}")
     
     for tag in soup.find_all("td", class_="col0"):
         content = tag.string
