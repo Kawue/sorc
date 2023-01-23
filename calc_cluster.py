@@ -2,17 +2,21 @@ import sys
 sys.path.append('.')
 import numpy as np
 from scipy.spatial.distance import squareform
-from scipy.cluster.hierarchy import linkage, fcluster
+from scipy.cluster.hierarchy import linkage, fcluster, maxRstat, inconsistent
 from sklearn.cluster import dbscan, spectral_clustering, affinity_propagation
 from sklearn.cluster import OPTICS as sklearnOPTICS
 from Pycluster import kmedoids as kmedoids_em
 from pyclustering.cluster.kmedoids import kmedoids as kmedoids_pam
 from calc_sd_matrix import similarity_distance_switcher
+sys.path.append('../msi-community-detection/')
+#sys.path.append('/vol/Karsten/Scripts/msi-community-detection/')
+from kode.workflow import workflow_extern as community_clustering
 
 class Cluster:#method_name, savepath
     def __init__(self, dmatrix):
         self.dmatrix = dmatrix
         self.labels = None
+        
 
     # Prepare arrays containing the similarity measure for each pair of one cluster once.
     def prep_cluster_similarity_array(self):
@@ -35,6 +39,44 @@ class Cluster:#method_name, savepath
 
 
 
+class MsiCommunityDetectionPCA(Cluster):
+    def __init__(self, dmatrix, savepath):
+        super().__init__(dmatrix)
+        self.savepath = savepath
+        #self.er_method = er_method
+    
+    def perform(self):
+        cl_labels = community_clustering(self.dmatrix, transform="pca", lower=np.amin(self.dmatrix), upper=np.amax(self.dmatrix), step=100, normalize=False, intersect=False, community_method="louvain", savepath=self.savepath)
+        self.labels = self.process_msi_community_detection_memb(cl_labels)
+        return self.labels
+    
+    # Bring affinity propagation output on par with hierarchical clustering output
+    def process_msi_community_detection_memb(self, labels):
+        if isinstance(labels, list):
+            labels = np.array(labels)
+        if 0 in labels:
+            self.labels = labels + 1
+        return self.labels
+
+class MsiCommunityDetectionStatistics(Cluster):
+    def __init__(self, dmatrix):
+        super().__init__(dmatrix)
+        #self.er_method = er_method
+    
+    def perform(self):
+        cl_labels = community_clustering(self.dmatrix, transform="statistics", center_fct="mean", dev_fct="std", C=1, community_method="louvain")
+        self.labels = self.process_msi_community_detection_memb(cl_labels)
+        return self.labels
+    
+    # Bring affinity propagation output on par with hierarchical clustering output
+    def process_msi_community_detection_memb(self, labels):
+        if isinstance(labels, list):
+            labels = np.array(labels)
+        if 0 in labels:
+            self.labels = labels + 1
+        return self.labels
+
+
 class Hierarchical(Cluster):
     def __init__(self, dmatrix, nr_cluster):
         super().__init__(dmatrix)
@@ -43,8 +85,17 @@ class Hierarchical(Cluster):
     def perform(self):
         cond_dmatrix = squareform(self.dmatrix)
         Z = linkage(cond_dmatrix, method="average", optimal_ordering=True)
-        if self.nr_cluster == "auto":
-            self.labels = fcluster(Z, t=0.3, criterion="distance")
+        if self.nr_cluster == -1:
+            #self.labels = fcluster(Z, t=0.3, criterion="distance")
+            #MR = maxRstat(Z, inconsistent(Z,d=self.dmatrix.shape[0]), 3)
+            #k = np.where(MR > 0)[0][0]
+            #cophnet_dist = hierarchy.cophenet(Z,squareform(dm))[0]
+            #k = np.where(MR > cophnet_dist)[0][0]
+            ## dd = dendrogram distance
+            mean_dd = np.mean(Z[:,2])
+            std_dd = np.std(Z[:,2])
+            C = 1
+            self.labels = fcluster(Z, t=C*std_dd+mean_dd, criterion="distance")
         else:    
             self.labels = fcluster(Z, t=self.nr_cluster, criterion="maxclust")
         return self.labels
@@ -69,9 +120,9 @@ class AffinityPropagation(Cluster):
 
 
 class kMedoidsEM(Cluster):
+    # Needs distance matrix
     def __init__(self, dmatrix, nr_cluster):
         super().__init__(dmatrix)
-        #self.dmatrix = dmatrix
         self.nr_cluster = nr_cluster
         self.kmedoids_em_init, self.seed = self.find_seed()
 
@@ -102,6 +153,7 @@ class kMedoidsEM(Cluster):
 
 
 class kMedoidsPAM(Cluster):
+    # Needs distance matrix
     def __init__(self, dmatrix, nr_cluster):
         super().__init__(dmatrix)
         self.nr_cluster = nr_cluster
@@ -131,14 +183,14 @@ class kMedoidsPAM(Cluster):
             np.random.seed(seed_idx)
             kmedoids_pam_init = np.random.randint(0, self.dmatrix.shape[0]-1, size=int(self.nr_cluster))
             if len(set(kmedoids_pam_init)) == self.nr_cluster:
-                print("Random Seed: %i"%(seed_idx))
+                print("Random Seed for kMedoids PAM: %i"%(seed_idx))
                 break
         return kmedoids_pam_init, seed_idx
 
 
 
 class DBSCAN(Cluster):
-    def __init__(self, dmatrix, nr_cluster):
+    def __init__(self, dmatrix):
         super().__init__(dmatrix)
         p99 = np.percentile(self.dmatrix[np.triu_indices_from(self.dmatrix, k=1)], 99)
         p1 = np.percentile(self.dmatrix[np.triu_indices_from(self.dmatrix, k=1)], 1)
@@ -161,7 +213,7 @@ class DBSCAN(Cluster):
 
 
 class OPTICS(Cluster):
-    def __init__(self, dmatrix, nr_cluster):
+    def __init__(self, dmatrix):
         super().__init__(dmatrix)
 
     def perform(self):
@@ -186,6 +238,7 @@ class Spectral(Cluster):
         p99 = np.percentile(self.dmatrix[np.triu_indices_from(self.dmatrix, k=1)], 99)
         p1 = np.percentile(self.dmatrix[np.triu_indices_from(self.dmatrix, k=1)], 1)
         self.delta = p99-p1
+        self.nr_cluster = nr_cluster
 
     def perform(self):
         cl_labels = spectral_clustering(np.exp(- self.dmatrix ** 2 / (2. * self.delta ** 2)), n_clusters=self.nr_cluster, random_state=0, assign_labels="discretize")

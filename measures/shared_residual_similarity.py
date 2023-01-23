@@ -1,7 +1,4 @@
-import sys
-sys.path.append('.')
-from helper.image_operators import coincidence_image, residual_image
-from helper.image_operators import coincidence_image, residual_image, binarize
+from kode.image_operators import coincidence_image, residual_image, binarize
 from skimage.morphology import opening, closing, square
 import numpy as np
 from scipy.ndimage import uniform_filter, gaussian_filter

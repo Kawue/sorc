@@ -3,7 +3,7 @@ import numpy as np
 def create_distance_matrix(imgs, measure, index_mask, kwargs):
     # Differentiation between singlescale and multiscale.
     # Shape for singlescale [#imgs, dim X, dim Y]
-    # Shape for multiscale [#sclaes, #imgs, dim X, dim Y]
+    # Shape for multiscale [#scales, #imgs, dim X, dim Y]
     if imgs.ndim == 4:
         dmatrix = np.empty((imgs.shape[1], imgs.shape[1]))
         for i in range(imgs.shape[1]):

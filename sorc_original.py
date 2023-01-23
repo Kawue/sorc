@@ -104,18 +104,18 @@ def write_sorc(hdfpath, savepath, limit):
         "   PP -- no MS -- Angular MS": "PP - 0 MS - Angular", 
         "   PP --  1 MS -- Angular MS": "PP - 1 MS - Angular", 
         "   PP --  2 MS -- Angular MS": "PP - 2 MS - Angular",
-        "no PP -- no MS -- SSIM MS": "     0 MS - MSSIM", 
-        "no PP --  1 MS -- SSIM MS": "     1 MS - MSSIM", 
-        "no PP --  2 MS -- SSIM MS": "     2 MS - MSSIM", 
-        "   PP -- no MS -- SSIM MS": "PP - 0 MS - MSSIM", 
-        "   PP --  1 MS -- SSIM MS": "PP - 1 MS - MSSIM", 
-        "   PP --  2 MS -- SSIM MS": "PP - 2 MS - MSSIM",
-        "no PP -- no MS -- MFS Max MS": "     0 MS - MMFS",
-        "no PP --  1 MS -- MFS Max MS": "     1 MS - MMFS", 
-        "no PP --  2 MS -- MFS Max MS": "     2 MS - MMFS", 
-        "   PP -- no MS -- MFS Max MS": "PP - 0 MS - MMFS", 
-        "   PP --  1 MS -- MFS Max MS": "PP - 1 MS - MMFS", 
-        "   PP --  2 MS -- MFS Max MS": "PP - 2 MS - MMFS",
+        "no PP -- no MS -- SSIM MS": "     0 MS - SSIM", 
+        "no PP --  1 MS -- SSIM MS": "     1 MS - SSIM", 
+        "no PP --  2 MS -- SSIM MS": "     2 MS - SSIM", 
+        "   PP -- no MS -- SSIM MS": "PP - 0 MS - SSIM", 
+        "   PP --  1 MS -- SSIM MS": "PP - 1 MS - SSIM", 
+        "   PP --  2 MS -- SSIM MS": "PP - 2 MS - SSIM",
+        "no PP -- no MS -- MFS Max MS": "     0 MS - MFS Max",
+        "no PP --  1 MS -- MFS Max MS": "     1 MS - MFS Max", 
+        "no PP --  2 MS -- MFS Max MS": "     2 MS - MFS Max", 
+        "   PP -- no MS -- MFS Max MS": "PP - 0 MS - MFS Max", 
+        "   PP --  1 MS -- MFS Max MS": "PP - 1 MS - MFS Max", 
+        "   PP --  2 MS -- MFS Max MS": "PP - 2 MS - MFS Max",
         "no PP -- no MS -- Shared Pixel": "     0 MS - Shared Pixel", 
         "   PP -- no MS -- Shared Pixel": "PP - 0 MS - Shared Pixel",
         "no PP -- no MS -- Hypergeometric": "     0 MS - Hypergeometric", 
@@ -124,8 +124,8 @@ def write_sorc(hdfpath, savepath, limit):
         "   PP -- no MS -- Contingency": "PP - 0 MS - Contingency",
         "no PP -- no MS -- Local Std": "     0 MS - Local Std", 
         "   PP -- no MS -- Local Std": "PP - 0 MS - Local Std",
-        "no PP -- no MS -- IntMagAn": "     0 MS - IMA Sim", 
-        "   PP -- no MS -- IntMagAn": "PP - 0 MS - IMA Sim",
+        "no PP -- no MS -- IntMagAn": "     0 MS - IntMagAn", 
+        "   PP -- no MS -- IntMagAn": "PP - 0 MS - IntMagAn",
         "no PP -- no MS -- Grad Info": "     0 MS - Grad Info", 
         "   PP -- no MS -- Grad Info": "PP - 0 MS - Grad Info",
         "no PP -- no MS -- Mutual Info": "     0 MS - Mutual Info", 
@@ -164,7 +164,7 @@ def write_sorc(hdfpath, savepath, limit):
     
     soup = BeautifulSoup("<html><head><style></style></head><body><h3></h3><div class=container></div><h3></h3><div class=container></div><h3></h3><div class=container></div><h3></h3><div class=container></div></body></html>", 'html.parser')
     soup.style.append(".container{display: flex;}")
-    soup.style.append("table{margin: 0.2vw; margin-bottom:2vw; margin-top:-0.6vw; width: 35.2vw; min-width: 35.2vw;}")
+    soup.style.append("table{margin: 0.2vw; margin-bottom:2vw; margin-top:-0.6vw; width: 34vw; min-width: 34vw;}")
     soup.style.append("caption{font-weight: bold;}")
     soup.style.append("hr{margin-left:0.2vw; margin-top:3vw; margin-bottom:5vw; width: 90.6vw;}")
     soup.style.append("table td{font-size: 13pt !important;}")
@@ -191,7 +191,7 @@ def write_sorc(hdfpath, savepath, limit):
         soup.find_all('div')[idx].append(broth.table)
         soup.style.append(broth.style.string)
 
-    soup.style.append(".col0{min-width:13.2vw !important;, width:13.2vw !important;}")
+    soup.style.append(".col0{min-width:12vw !important;, width:12vw !important;}")
     soup.style.append(".col1{min-width:4vw !important; width:4vw !important;}")
     soup.style.append(".col2{min-width:4vw !important; width:4vw !important;}")
     soup.style.append(".col3{min-width:6vw !important; width:6vw !important;}")

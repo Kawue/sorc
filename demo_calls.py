@@ -8,12 +8,12 @@ from measures.hog_variant import hog
 from measures.edge_orientation_autocorrelogram import eoac
 from measures.mean_deviation_similarity_index import mdsi
 from measures.contingency_similarity import contingency
-from measures.cosine_variants import cosine
+from measures.cosine_variants import cosine, angular
 from measures.pearson_variants import pearson
 from measures.hypergeometric_similarity import hypergeometric_similarity
 from measures.gradient_measures import gradient_information, int_mag_an
 from measures.multi_feature_similarity_variants import multi_feature_similarity
-from measures.ssim_variants import compare_ssim
+from measures.ssim_variants import compare_ssim, compare_gssim, compare_ssim4, compare_gssim4, compare_fsim, compare_fsm, compare_gmsd, compare_stsim
 from measures.shared_residual_similarity import shared_residual_similarity
 
 
@@ -26,8 +26,40 @@ def calc_cosine_ms(X, Y, index_mask, kwargs):
     score = cosine(X, Y, index_mask)
     return score
 
+def calc_angular_ms(X, Y, index_mask, kwargs):
+    score = angular(X, Y, index_mask)
+    return score
+
 def calc_ssim_ms(X, Y, index_mask, kwargs):
     score, _ = compare_ssim(X, Y, index_mask, **kwargs)
+    return score
+
+def calc_gssim_ms(X, Y, index_mask, kwargs):
+    score, _ = compare_gssim(X, Y, index_mask, **kwargs)
+    return score
+
+def calc_ssim4_ms(X, Y, index_mask, kwargs):
+    score, _, _, _, _, _ = compare_ssim4(X, Y, index_mask, **kwargs)
+    return score
+
+def calc_gssim4_ms(X, Y, index_mask, kwargs):
+    score, _, _, _, _, _ = compare_gssim4(X, Y, index_mask, **kwargs)
+    return score
+
+def calc_fsim_ms(X, Y, index_mask, kwargs):
+    score, _ = compare_fsim(X, Y, index_mask, **kwargs)
+    return score
+
+def calc_fsm_ms(X, Y, index_mask, kwargs):
+    score, _ = compare_fsm(X, Y, index_mask, **kwargs)
+    return score
+
+def calc_gmsd_ms(X, Y, index_mask, kwargs):
+    score, _ = compare_gmsd(X, Y, index_mask, **kwargs)
+    return 1-score
+
+def calc_stsim_ms(X, Y, index_mask, kwargs):
+    score, _ = compare_stsim(X, Y, index_mask, **kwargs)
     return score
 
 def calc_multi_feature_similarity(X, Y, index_mask, kwargs):

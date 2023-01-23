@@ -161,7 +161,7 @@ def compare_gssim(X, Y, index_mask, L=1, win_size=None, gaussian_weights=True, s
 # Formulation of regions deviates from the reference.
 # The reference has soften rules for the degraded image, this does not apply in this application scenario.
 # TODO: Allow weights as parameters
-def compare_ssim4(img1, img2, index_mask, win_size=None, gaussian_weights=False, sigma=1.5, ssim_map=None, return_maps=True):
+def compare_ssim4(img1, img2, index_mask, win_size=None, gaussian_weights=True, sigma=None, ssim_map=None, return_maps=True):
     # Calcuate gradient magnitude maps of both images
     dy1, dx1 = gradient_map(img1)
     mag1 = magnitude_map(dy1,dx1)
@@ -195,7 +195,7 @@ def compare_ssim4(img1, img2, index_mask, win_size=None, gaussian_weights=False,
     t_map[idx_t] = w_t
     
     if ssim_map is None:
-        _, ssim_map = compare_ssim(img1, img2, win_size=win_size, gaussian_weights=gaussian_weights)
+        _, ssim_map = compare_ssim(img1, img2, index_mask=index_mask, win_size=win_size, gaussian_weights=gaussian_weights, sigma=sigma)
 
     ssim_ep = ssim_map * ep_map
     ssim_ec = ssim_map * ec_map
@@ -221,10 +221,10 @@ def compare_ssim4(img1, img2, index_mask, win_size=None, gaussian_weights=False,
 
 
 # TODO: Allow weights as parameters
-def compare_gssim4(img1, img2, index_mask, win_size=None, gaussian_weights=False, ssim_map=None, return_maps=True):
+def compare_gssim4(img1, img2, index_mask, win_size=None, gaussian_weights=True, sigma=None, ssim_map=None, return_maps=True):
     if ssim_map is None:
-        _, ssim_map = compare_gssim(img1, img2, win_size=win_size, gaussian_weights=gaussian_weights)
-    return compare_ssim4(img1, img2, ssim_map=ssim_map, index_mask=index_mask, return_maps=return_maps)
+        _, ssim_map = compare_gssim(img1, img2, index_mask=index_mask, win_size=win_size, gaussian_weights=gaussian_weights, sigma=sigma)
+    return compare_ssim4(img1, img2, ssim_map=ssim_map, index_mask=index_mask, win_size=win_size, return_maps=return_maps)
 
 
 
@@ -444,12 +444,12 @@ def compare_fsim(X, Y, index_mask):
 
 
 
-def compare_fsm(X, Y, index_mask, win_size=None, gaussian_weights=False, sigma=1.5, return_map=True):
+def compare_fsm(X, Y, index_mask, win_size=None, gaussian_weights=True, sigma=1.5, return_map=True):
     a, b, c, e = 5, 3, 7, 0.01
 
     # TODO: Check if non binary edge detection maps would improve this measure.
-    c_X = canny(X)
-    c_Y = canny(Y)
+    c_X = canny(X).astype(float)
+    c_Y = canny(Y).astype(float)
 
     if index_mask:
         ux = np.mean(c_X[index_mask])
@@ -458,8 +458,8 @@ def compare_fsm(X, Y, index_mask, win_size=None, gaussian_weights=False, sigma=1
         ux = np.mean(c_X)
         uy = np.mean(c_Y)
 
-    ssim_score, ssim_map = compare_ssim(c_X, c_Y, win_size=win_size, gaussian_weights=gaussian_weights, sigma=sigma)
-    fsim_score, fsim_map = compare_fsim(c_X, c_Y)
+    ssim_score, ssim_map = compare_ssim(c_X, c_Y, index_mask, win_size=win_size, gaussian_weights=gaussian_weights, sigma=sigma)
+    fsim_score, fsim_map = compare_fsim(c_X, c_Y, index_mask)
 
     # to avoid edge effects will ignore filter radius strip around edges
     pad = (win_size - 1) // 2
